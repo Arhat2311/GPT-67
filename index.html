@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-67 AI Detector</title>
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            color: #1a202c;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        .orb1 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.4) 100%);
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+        
+        .orb2 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(240, 147, 251, 0.7) 0%, rgba(245, 175, 255, 0.3) 100%);
+            bottom: -150px;
+            right: -150px;
+            animation-delay: -5s;
+        }
+        
+        .orb3 {
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(165, 142, 251, 0.6) 0%, rgba(168, 189, 255, 0.3) 100%);
+            top: 50%;
+            left: 50%;
+            animation-delay: -10s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            25% { transform: translate(100px, -100px) scale(1.1) rotate(90deg); }
+            50% { transform: translate(-50px, 100px) scale(0.9) rotate(180deg); }
+            75% { transform: translate(150px, 50px) scale(1.05) rotate(270deg); }
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(40px);
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            border-radius: 32px;
+            box-shadow: 0 30px 90px rgba(102, 126, 234, 0.3), 
+                        0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+            max-width: 900px;
+            width: 100%;
+            padding: 48px;
+            position: relative;
+            z-index: 1;
+            margin: auto;
+        }
+        
+        .header { 
+            margin-bottom: 48px;
+            text-align: center;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .logo-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 14px 24px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 26px;
+            letter-spacing: -0.5px;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+        
+        h1 { 
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 15px;
+            color: #4a5568;
+            font-weight: 500;
+        }
+        
+        .input-section {
+            margin-bottom: 24px;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 220px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 20px;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #1a202c;
+            resize: vertical;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        
+        textarea::placeholder {
+            color: #a0aec0;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+        }
+        
+        .button-group { 
+            display: flex; 
+            gap: 16px; 
+            margin-bottom: 40px; 
+        }
+        
+        button { 
+            flex: 1; 
+            padding: 16px 24px;
+            border-radius: 16px;
+            cursor: pointer;
+            border: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        
+        .analyze-btn { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+        }
+        
+        .analyze-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5);
+        }
+        
+        .analyze-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .clear-btn {
+            background: rgba(160, 174, 192, 0.2);
+            color: #4a5568;
+            border: 2px solid rgba(160, 174, 192, 0.4);
+        }
+        
+        .clear-btn:hover {
+            background: rgba(160, 174, 192, 0.3);
+            border-color: rgba(160, 174, 192, 0.6);
+        }
+        
+        .results { 
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .results.show { 
+            display: block; 
+        }
+        
+        .result-card { 
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(240, 147, 251, 0.08) 100%);
+            border: 2px solid rgba(102, 126, 234, 0.25);
+            border-radius: 24px;
+            padding: 40px;
+        }
+        
+        .score-display { 
+            text-align: center; 
+        }
+        
+        .score-circle { 
+            width: 200px; 
+            height: 200px; 
+            position: relative; 
+            margin: 0 auto 32px; 
+        }
+        
+        .progress-ring { 
+            transform: rotate(-90deg); 
+        }
+        
+        .progress-ring-circle { 
+            transition: stroke-dashoffset 0.8s ease;
+            stroke-width: 12;
+            fill: transparent;
+            stroke: #667eea;
+            filter: drop-shadow(0 0 12px rgba(102, 126, 234, 0.6));
+        }
+        
+        .progress-ring-bg { 
+            stroke: rgba(102, 126, 234, 0.15);
+            stroke-width: 12;
+            fill: transparent;
+        }
+        
+        .score-content { 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+        }
+        
+        .score-number { 
+            font-size: 52px; 
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -2px;
+        }
+        
+        .score-label {
+            font-size: 13px;
+            color: #4a5568;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        
+        .verdict {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1a202c;
+        }
+        
+        .description {
+            font-size: 14px;
+            color: #718096;
+            margin-bottom: 32px;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 32px;
+        }
+        
+        .metric-box {
+            background: rgba(255, 255, 255, 0.6);
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 20px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .metric-box:hover {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(102, 126, 234, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
+        }
+        
+        .metric-title { 
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #718096;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .metric-result { 
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+            
+            .container {
+                padding: 32px 24px;
+            }
+            
+            h1 {
+                font-size: 28px;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg">
+        <div class="orb orb1"></div>
+        <div class="orb orb2"></div>
+        <div class="orb orb3"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo-section">
+                <div class="logo-badge">GPT-67</div>
+            </div>
+            <h1>AI Detector</h1>
+            <p class="subtitle">Statistical model-based content analysis</p>
+        </div>
+
+        <div class="input-section">
+            <textarea id="textInput" placeholder="Paste your text here for analysis (minimum 50 characters)..."></textarea>
+        </div>
+
+        <div class="button-group">
+            <button class="analyze-btn" onclick="analyzeText()">Analyze Text</button>
+            <button class="clear-btn" onclick="clearAll()">Clear</button>
+        </div>
+
+        <div class="results" id="results">
+            <div class="result-card">
+                <div class="score-display">
+                    <div class="score-circle">
+                        <svg width="200" height="200" class="progress-ring">
+                            <circle class="progress-ring-bg" cx="100" cy="100" r="90"></circle>
+                            <circle class="progress-ring-circle" id="progressCircle" cx="100" cy="100" r="90" stroke-dasharray="565.48" stroke-dashoffset="565.48"></circle>
+                        </svg>
+                        <div class="score-content">
+                            <div class="score-number" id="scoreNumber">0%</div>
+                            <div class="score-label">AI Probability</div>
+                        </div>
+                    </div>
+                    <div class="verdict" id="verdict">Analyzing...</div>
+                    <div class="description" id="description">Running neural analysis...</div>
+		    <div style="margin-top: 20px; font-size: 12px; color: #718096; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 10px;">
+    Due to this being a statistical model, there could be an offset of ±10. However, the zone where it is said to be lying is almost accurate.
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-box">
+                        <div class="metric-title">Perplexity</div>
+                        <div class="metric-result" id="perplexity">--</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-title">Burstiness</div>
+                        <div class="metric-result" id="burstiness">--</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-title">Mechanics</div>
+                        <div class="metric-result" id="mechanics">--</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-title">Contractions</div>
+                        <div class="metric-result" id="contractions">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+async function analyzeText() {
+    const textInput = document.getElementById('textInput');
+    const text = textInput.value.trim();
+
+    if (text.length < 50) {
+        alert('Please enter at least 50 characters.');
+        return;
+    }
+
+    const resultsDiv = document.getElementById('results');
+    const verdictEl = document.getElementById('verdict');
+    const descriptionEl = document.getElementById('description');
+    const scoreNumber = document.getElementById('scoreNumber');
+    const progressCircle = document.getElementById('progressCircle');
+
+    resultsDiv.classList.add('show');
+    verdictEl.textContent = 'Analyzing...';
+    descriptionEl.textContent = 'Please wait, GPT-2 is calculating perplexity (this may take 10-15 seconds)...';
+
+    // Scroll results into view smoothly
+    setTimeout(() => {
+        resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
+
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000); 
+
+        const response = await fetch('/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: text }),
+            signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (!response.ok) throw new Error('Server returned an error');
+
+ 	const data = await response.json();
+        const aiScore = data.probability;
+
+        // --- NEW COLOR & VERDICT LOGIC ---
+        let color = "";
+        let label = "";
+        let desc = "";
+
+        if (aiScore < 20) {
+            color = "#10b981"; // Green
+            label = "Safe - Human";
+            desc = "Text exhibits high natural variation typical of human writing.";
+        } else if (aiScore < 60) {
+            color = "#f59e0b"; // Yellow
+            label = "Medium - Mixed Content";
+            desc = "Likely human-written with some AI-assisted sections or heavy editing.";
+        } else if (aiScore < 85) {
+            color = "#e67e22"; // Orange
+            label = "High Medium - AI Polished";
+            desc = "Human-led structure but heavily refined or corrected by AI tools.";
+        } else {
+            color = "#ef4444"; // Red
+            label = "AI Generated";
+            desc = "Statistical patterns highly suggest automated content generation.";
+        }
+
+        // Update Score and Circle
+        scoreNumber.textContent = aiScore + '%';
+        scoreNumber.style.color = color; // Change number color to match
+        
+        const circumference = 2 * Math.PI * 90;
+        const offset = circumference - (aiScore / 100) * circumference;
+        progressCircle.style.strokeDashoffset = offset;
+        progressCircle.style.stroke = color;
+        progressCircle.style.filter = `drop-shadow(0 0 12px ${color}66)`; // Adaptive glow
+
+        // Update Labels
+        verdictEl.textContent = label;
+        verdictEl.style.color = color;
+        descriptionEl.textContent = desc;
+
+        // Update Metrics
+        document.getElementById('perplexity').textContent = data.metrics.perplexity;
+        document.getElementById('burstiness').textContent = data.metrics.burstiness;
+        document.getElementById('mechanics').textContent = data.metrics.mechanics;
+        document.getElementById('contractions').textContent = (data.metrics.contractions * 100).toFixed(1) + '%';
+
+    } catch (error) {
+        console.error('Error:', error);
+        verdictEl.textContent = 'Connection Issue';
+        descriptionEl.textContent = error.name === 'AbortError' ? 'The request timed out. Try a shorter text.' : 'Ensure app.py is running and model is loaded.';
+    }
+}
+
+function clearAll() {
+    document.getElementById('textInput').value = '';
+    document.getElementById('results').classList.remove('show');
+    document.getElementById('perplexity').textContent = '--';
+    document.getElementById('burstiness').textContent = '--';
+    document.getElementById('mechanics').textContent = '--';
+    document.getElementById('contractions').textContent = '--';
+    
+    // Scroll back to top smoothly
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
